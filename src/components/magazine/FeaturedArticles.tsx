@@ -66,18 +66,19 @@ export const FeaturedArticles = () => {
   );
 
   const allArticles = data?.articles || [];
-  // Filter published articles and sort them or follow some logic
-  const publishedArticles = allArticles.filter(a => a && (a.status === 'published' || a.status === 'featured' || !a.status));
+  // Filter published articles and sort them by date (latest first)
+  const publishedArticles = [...allArticles]
+    .filter(a => a && (a.status === 'published' || a.status === 'featured' || !a.status))
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   
-  // Use featured articles for carousel, others for side list
+  // Use featured articles for carousel
   const featuredArticles = publishedArticles.filter(a => a?.isFeatured);
   
   if (publishedArticles.length === 0) return null;
 
-  // Let's use up to 3 for carousel, and the rest for side
+  // Let's use up to 3 for carousel, and all articles for the list as requested
   const carouselArticles = featuredArticles.length > 0 ? featuredArticles.slice(0, 3) : publishedArticles.slice(0, 1);
-  const carouselIds = new Set(carouselArticles.map(a => a.id));
-  const sideArticles = publishedArticles.filter(a => !carouselIds.has(a.id)).slice(0, 3);
+  const sideArticles = publishedArticles;
 
   const formatDate = (dateString: string) => {
     if (!dateString) return "";
@@ -171,22 +172,28 @@ export const FeaturedArticles = () => {
 
           {/* Side Articles */}
           <div className="space-y-6">
-            {sideArticles.map((article) => (
-              <article
-                key={article.id}
-                onClick={() => navigate(`/artigo/${article.id}`)}
-                className="group cursor-pointer p-6 border border-border rounded-lg hover:border-primary/50 transition-all duration-300 hover:shadow-[0_0_30px_hsl(43_74%_49%/0.1)]"
-              >
-                <span className="category-tag">{article.section?.name || "Geral"}</span>
-                <h3 className="article-title text-lg mt-2">{article.title}</h3>
-                <p className="body-text text-sm mt-2 line-clamp-2">{article.excerpt}</p>
-                <div className="flex items-center gap-3 mt-4">
-                  <span className="text-xs text-foreground">{article.author?.name}</span>
-                  <span className="w-1 h-1 rounded-full bg-primary/50" />
-                  <span className="text-xs text-muted-foreground">{formatDate(article.createdAt)}</span>
-                </div>
-              </article>
-            ))}
+            <h3 className="font-serif text-xl font-semibold mb-6 flex items-center gap-2">
+              <span className="w-8 h-px bg-primary/30"></span>
+              Todos os Artigos
+            </h3>
+            <div className="max-h-[800px] overflow-y-auto pr-2 space-y-6 scrollbar-thin scrollbar-thumb-primary/20">
+              {sideArticles.map((article) => (
+                <article
+                  key={article.id}
+                  onClick={() => navigate(`/artigo/${article.id}`)}
+                  className="group cursor-pointer p-6 border border-border rounded-lg hover:border-primary/50 transition-all duration-300 hover:shadow-[0_0_30px_hsl(43_74%_49%/0.1)]"
+                >
+                  <span className="category-tag">{article.section?.name || "Geral"}</span>
+                  <h3 className="article-title text-lg mt-2">{article.title}</h3>
+                  <p className="body-text text-sm mt-2 line-clamp-2">{article.excerpt}</p>
+                  <div className="flex items-center gap-3 mt-4">
+                    <span className="text-xs text-foreground">{article.author?.name}</span>
+                    <span className="w-1 h-1 rounded-full bg-primary/50" />
+                    <span className="text-xs text-muted-foreground">{formatDate(article.createdAt)}</span>
+                  </div>
+                </article>
+              ))}
+            </div>
           </div>
         </div>
 
