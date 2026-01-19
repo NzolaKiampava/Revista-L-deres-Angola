@@ -1,5 +1,6 @@
 import { Header } from "@/components/magazine/Header";
 import { HeroSection } from "@/components/magazine/HeroSection";
+import { FeaturedHighlights } from "@/components/magazine/FeaturedHighlights";
 import { FeaturedArticles } from "@/components/magazine/FeaturedArticles";
 import { LeaderProfiles } from "@/components/magazine/LeaderProfiles";
 import { InterviewSection } from "@/components/magazine/InterviewSection";
@@ -12,6 +13,7 @@ const Index = () => {
       <Header />
       <main>
         <HeroSection />
+        <FeaturedHighlights />
         <FeaturedArticles />
         <LeaderProfiles />
         <InterviewSection />
